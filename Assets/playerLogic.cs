@@ -10,6 +10,7 @@ public class playerLogic : MonoBehaviour
     public float movSpeed = 5f;
     private bool facingRight = true;
     public Animator animator;
+    public int HP = 100;
     
     void Start()
     {
@@ -53,6 +54,11 @@ public class playerLogic : MonoBehaviour
             animator.SetTrigger("Attack");
         }
 
+        if (HP <= 0f)
+        {
+            Death();
+        }
+
     }
 
     private void FixedUpdate()
@@ -77,4 +83,14 @@ public class playerLogic : MonoBehaviour
         }
     }
 
+    public void takingDamage(int damagetaken)
+    {
+        HP -= damagetaken;
+        animator.SetTrigger("Hit");
+    }
+
+    public void Death()
+    {
+        Debug.Log("Player is dead");
+    }
 }
