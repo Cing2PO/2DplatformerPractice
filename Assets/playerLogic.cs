@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class playerLogic : MonoBehaviour
 {
@@ -12,9 +13,12 @@ public class playerLogic : MonoBehaviour
     public Animator animator;
     public int HP = 100;
     public int attackDamage = 50;
+    public float atkInterval = 1f;
+    public float atkTimer = 0f;
     public Transform attackPoint;
     public LayerMask attackLayer;
     public float attackRange = 2f;
+    public Text HPText;
     
     void Start()
     {
@@ -24,6 +28,14 @@ public class playerLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (FindObjectOfType<gameManager>().isGameActive == false)
+        {
+            animator.SetFloat("Run", 0f);
+            animator.SetBool("Jump", false);
+            return;
+        }
+        //update HP text
+        HPText.text = "HP: " + HP.ToString();
         movement = Input.GetAxis("Horizontal");
         //flip player
         if (movement < 0f && facingRight)
@@ -53,10 +65,21 @@ public class playerLogic : MonoBehaviour
             animator.SetFloat("Run", 0f);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        //attack
+        if (atkTimer > 0f)
         {
-            animator.SetTrigger("Attack");
+            atkTimer -= Time.deltaTime;
         }
+        else if (atkTimer < 0f)
+        {
+            atkTimer = 0f;
+        }
+        if(Input.GetMouseButtonDown(0) && atkTimer <= 0f)
+        {
+            animator.SetTrigger("Attack1");
+            atkTimer = atkInterval;
+        }
+
 
         if (HP <= 0f)
         {
@@ -104,13 +127,8 @@ public class playerLogic : MonoBehaviour
     public void Death()
     {
         animator.SetTrigger("Death");
-        //disable player movement
-        this.enabled = false;
-        //disable player input
-        InputSystem.DisableDevice(Keyboard.current);
-        InputSystem.DisableDevice(Mouse.current);
-        //destroy player after 2 seconds
         Destroy(gameObject, 2f);
+        FindObjectOfType<gameManager>().isGameActive = false;
     }
 
     private void OnDrawGizmosSelected()

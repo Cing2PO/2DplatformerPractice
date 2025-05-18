@@ -18,6 +18,8 @@ public class enemy1logic : MonoBehaviour
     public int HP = 100;
     public int attackDamage = 10;
     public int attackCount = 0;
+    public float attackInterval = 2f;
+    public float attackTimer = 0f;
     void Start()
     {
         
@@ -26,6 +28,21 @@ public class enemy1logic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (FindObjectOfType<gameManager>().isGameActive == false)
+        {
+            animator.SetBool("walk", false);
+            animator.SetBool("attack1", false);
+            animator.SetBool("attack2", false);
+            return;
+        }
+        if (attackTimer > 0f)
+        {
+            attackTimer -= Time.deltaTime;
+        }
+        else if (attackTimer < 0f)
+        {
+            attackTimer = 0f;
+        }
         if (Vector2.Distance(transform.position, player.position) <= visionRange)
         {
             inRange = true;
@@ -44,20 +61,22 @@ public class enemy1logic : MonoBehaviour
             if (Vector2.Distance(transform.position, player.position) <= attackRange*2)
             {
                 animator.SetBool("walk", false);
-                if (attackCount < 2)
+                if (attackTimer <= 0f)
                 {
-                    animator.SetBool("attack1", true);
-                    animator.SetBool("attack2", false);
+                    if (attackCount < 2)
+                    {
+                        attackTimer = attackInterval;
+                        animator.SetBool("attack1", true);
+                        animator.SetBool("attack2", false);
+                    }
+                    else if (attackCount == 2)
+                    {
+                        attackTimer = attackInterval;
+                        animator.SetBool("attack2", true);
+                        animator.SetBool("attack1", false);
+
+                    }
                 }
-                else if (attackCount == 2)
-                {
-                    animator.SetBool("attack2", true);
-                    animator.SetBool("attack1", false);
-                    
-                }
-               
-                
-                
             }
             else
             {
@@ -155,6 +174,6 @@ public class enemy1logic : MonoBehaviour
     private void Death()
     {
         animator.SetTrigger("Death");
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 1.5f);
     }
 }
