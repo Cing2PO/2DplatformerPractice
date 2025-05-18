@@ -41,12 +41,11 @@ public class enemy1logic : MonoBehaviour
                 transform.position = new Vector3(transform.position.x + 4f, transform.position.y, 0f);
                 facingLeft = false;
             }   
-            if (Vector2.Distance(transform.position, player.position) <= attackRange)
+            if (Vector2.Distance(transform.position, player.position) <= attackRange*2)
             {
                 animator.SetBool("walk", false);
                 if (attackCount < 2)
                 {
-                    
                     animator.SetBool("attack1", true);
                     animator.SetBool("attack2", false);
                 }
@@ -88,7 +87,10 @@ public class enemy1logic : MonoBehaviour
             }
         }
         
-
+        if (HP <= 0f)
+        {
+            Death();
+        }
        
 
     }
@@ -99,10 +101,10 @@ public class enemy1logic : MonoBehaviour
 
         if (atkCollider)
         {
+            attackCount++;
             if (atkCollider.gameObject.GetComponent<playerLogic>() != null)
             {
                 atkCollider.gameObject.GetComponent<playerLogic>().takingDamage(attackDamage);
-                attackCount += 1;
             }
         }
     }
@@ -114,13 +116,14 @@ public class enemy1logic : MonoBehaviour
 
         if (atkCollider)
         {
+            attackCount = 0;
             if (atkCollider.gameObject.GetComponent<playerLogic>() != null)
             {
                 atkCollider.gameObject.GetComponent<playerLogic>().takingDamage(attackDamage*2);
-                attackCount = 0;
             }
         }
     }
+
     private void OnDrawGizmos()
     {
         if (checkpoint == null){ 
@@ -135,5 +138,23 @@ public class enemy1logic : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
+    public void takingDamage(int damagetaken)
+    {
+        if (HP <= 0f)
+        {
+            return;
+        }
+        else if (HP > 0f)
+        {
+            HP -= damagetaken;
+            animator.SetTrigger("Hit");
+        }
+        
+    }
     
+    private void Death()
+    {
+        animator.SetTrigger("Death");
+        Destroy(gameObject, 2f);
+    }
 }

@@ -11,6 +11,10 @@ public class playerLogic : MonoBehaviour
     private bool facingRight = true;
     public Animator animator;
     public int HP = 100;
+    public int attackDamage = 50;
+    public Transform attackPoint;
+    public LayerMask attackLayer;
+    public float attackRange = 2f;
     
     void Start()
     {
@@ -85,12 +89,45 @@ public class playerLogic : MonoBehaviour
 
     public void takingDamage(int damagetaken)
     {
-        HP -= damagetaken;
-        animator.SetTrigger("Hit");
+        if (HP <= 0f)
+        {
+            return;
+        }
+        else if (HP > 0f)
+        {
+            HP -= damagetaken;
+            animator.SetTrigger("Hit");
+        }
+        
     }
 
     public void Death()
     {
-        Debug.Log("Player is dead");
+        animator.SetTrigger("Death");
+        //disable player movement
+        this.enabled = false;
+        //disable player input
+        InputSystem.DisableDevice(Keyboard.current);
+        InputSystem.DisableDevice(Mouse.current);
+        //destroy player after 2 seconds
+        Destroy(gameObject, 2f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    public void Attack1()
+    {
+        Collider2D atkCollider = Physics2D.OverlapCircle(attackPoint.position, attackRange, attackLayer);
+        if (atkCollider)
+        {
+            if (atkCollider.gameObject.GetComponent<enemy1logic>() != null)
+            {
+                atkCollider.gameObject.GetComponent<enemy1logic>().takingDamage(attackDamage);
+            }
+        }
     }
 }
