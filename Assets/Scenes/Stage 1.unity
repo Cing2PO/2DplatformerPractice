@@ -2239,11 +2239,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 403553615}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51c5a04cd3b321346b2458ed7d4b8377, type: 3}
+  m_Script: {fileID: 11500000, guid: 72fcf50a735055c45842ae12c4ae14c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenuUI: {fileID: 403553615}
-  IsPaused: 0
+  pauseMenuUI: {fileID: 0}
 --- !u!1 &414124726
 GameObject:
   m_ObjectHideFlags: 0
@@ -2327,9 +2326,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 403553615}
+      - m_Target: {fileID: 403553617}
         m_TargetAssemblyTypeName: mainMenuController, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12379,7 +12378,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 403553617}
-        m_TargetAssemblyTypeName: PauseMenuController, Assembly-CSharp
+        m_TargetAssemblyTypeName: mainMenuController, Assembly-CSharp
         m_MethodName: LoadMainMenu
         m_Mode: 1
         m_Arguments:
@@ -12782,7 +12781,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 403553617}
-        m_TargetAssemblyTypeName: PauseMenuController, Assembly-CSharp
+        m_TargetAssemblyTypeName: mainMenuController, Assembly-CSharp
         m_MethodName: Resume
         m_Mode: 1
         m_Arguments:

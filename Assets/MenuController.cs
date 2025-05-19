@@ -20,14 +20,10 @@ public class mainMenuController : MonoBehaviour
         {
             if (IsPaused)
             {
-                Debug.Log("Resume");
-                pauseMenuUI.SetActive(false);
                 Resume();
             }
             else
             {
-                Debug.Log("Pause");
-                pauseMenuUI.SetActive(true);
                 Pause();
             }
         }
@@ -35,11 +31,13 @@ public class mainMenuController : MonoBehaviour
 
     public void Resume()
     {
+        pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         IsPaused = false;
     }
     public void Pause()
     {
+        pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         IsPaused = true;
     }
