@@ -11,18 +11,18 @@ public class playerLogic : MonoBehaviour
     public float movSpeed = 5f;
     private bool facingRight = true;
     public Animator animator;
-    public int HP = 100;
+    public int HP;
+    public int maxHP = 100;
     public int attackDamage = 50;
     public float atkInterval = 1f;
     public float atkTimer = 0f;
     public Transform attackPoint;
     public LayerMask attackLayer;
     public float attackRange = 2f;
-    public Text HPText;
     
     void Start()
     {
-        
+        HP = maxHP;
     }
 
     // Update is called once per frame
@@ -35,7 +35,6 @@ public class playerLogic : MonoBehaviour
             return;
         }
         //update HP text
-        HPText.text = "HP: " + HP.ToString();
         movement = Input.GetAxis("Horizontal");
         //flip player
         if (movement < 0f && facingRight)

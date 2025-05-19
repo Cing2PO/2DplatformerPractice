@@ -18,7 +18,7 @@ public class enemy1logic : MonoBehaviour
     public int HP = 100;
     public int attackDamage = 10;
     public int attackCount = 0;
-    public float attackInterval = 2f;
+    public float attackInterval = 5f;
     public float attackTimer = 0f;
     void Start()
     {
@@ -39,7 +39,7 @@ public class enemy1logic : MonoBehaviour
         {
             attackTimer -= Time.deltaTime;
         }
-        else if (attackTimer < 0f)
+        else if (attackTimer <= 0f)
         {
             attackTimer = 0f;
         }
@@ -58,30 +58,21 @@ public class enemy1logic : MonoBehaviour
                 transform.position = new Vector3(transform.position.x + 4f, transform.position.y, 0f);
                 facingLeft = false;
             }   
-            if (Vector2.Distance(transform.position, player.position) <= attackRange*2)
+            if ((Vector2.Distance(transform.position, player.position) <= attackRange*2) && attackTimer <= 0f)
             {
                 animator.SetBool("walk", false);
-                if (attackTimer <= 0f)
-                {
-                    if (attackCount < 2)
-                    {
-                        attackTimer = attackInterval;
-                        animator.SetBool("attack1", true);
-                        animator.SetBool("attack2", false);
-                    }
-                    else if (attackCount == 2)
-                    {
-                        attackTimer = attackInterval;
-                        animator.SetBool("attack2", true);
-                        animator.SetBool("attack1", false);
+                if (attackCount < 2)
+               {
+                    animator.SetBool("attack1",true);
+               }
+                else if (attackCount >= 2)
+               {
+                    animator.SetBool("attack2",true);
 
-                    }
-                }
+               }
             }
             else
             {
-                animator.SetBool("attack1", false);
-                animator.SetBool("attack2", false);
                 animator.SetBool("walk", true);
                 transform.position = Vector2.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
             }
@@ -135,12 +126,27 @@ public class enemy1logic : MonoBehaviour
 
         if (atkCollider)
         {
-            attackCount = 0;
             if (atkCollider.gameObject.GetComponent<playerLogic>() != null)
             {
                 atkCollider.gameObject.GetComponent<playerLogic>().takingDamage(attackDamage*2);
             }
         }
+    }
+    public void attackreset()
+    {
+        attackTimer = attackInterval;
+        animator.SetBool("attack1", false);
+        animator.SetBool("attack2", false);
+        if (attackCount >= 2)
+        {
+            attackCount = 0;
+        }
+        else if (attackCount < 2)
+        {
+            attackCount++;
+        }
+        
+
     }
 
     private void OnDrawGizmos()
