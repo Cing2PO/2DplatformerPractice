@@ -6,11 +6,12 @@ using UnityEditor.Build.Content;
 public class mainMenuController : MonoBehaviour
 {
     public GameObject pauseMenuUI;
-    public static bool IsPaused;
+    public bool IsPaused = false;
     void Start()
     {
-        IsPaused = false;
         pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        IsPaused = false;
     }
 
     // Update is called once per frame
@@ -34,6 +35,7 @@ public class mainMenuController : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         IsPaused = false;
+
     }
     public void Pause()
     {

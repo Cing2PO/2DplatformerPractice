@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class enemy1logic : MonoBehaviour
 {
+    public bool isAlive = true;
     public bool facingLeft = true;
     public float moveSpeed = 3f;
     public Transform checkpoint;
@@ -20,6 +21,7 @@ public class enemy1logic : MonoBehaviour
     public int attackCount = 0;
     public float attackInterval = 5f;
     public float attackTimer = 0f;
+    public gameManager gameManager;
     void Start()
     {
         
@@ -28,13 +30,6 @@ public class enemy1logic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (FindObjectOfType<gameManager>().isGameActive == false)
-        {
-            animator.SetBool("walk", false);
-            animator.SetBool("attack1", false);
-            animator.SetBool("attack2", false);
-            return;
-        }
         if (attackTimer > 0f)
         {
             attackTimer -= Time.deltaTime;
@@ -80,24 +75,25 @@ public class enemy1logic : MonoBehaviour
         else
         {
             inRange = false;
+            if(facingLeft == true)
             transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
             RaycastHit2D hit = Physics2D.Raycast(checkpoint.position, Vector2.down, distance, layerMask);
 
-            if (hit == false && facingLeft == true)
-            {
-                transform.eulerAngles = new Vector3(0f, -180f, 0f);
-                transform.position = new Vector3(transform.position.x + 4f, transform.position.y, 0f);
-                facingLeft = false;
-            }
-            else if (hit == false && facingLeft == false)
-            {
-                transform.eulerAngles = new Vector3(0f, 0f, 0f);
-                transform.position = new Vector3(transform.position.x - 4f, transform.position.y, 0f);
-                facingLeft = true;
-            }
+            //if (hit == false && facingLeft == true)
+            //{
+                //transform.eulerAngles = new Vector3(0f, -180f, 0f);
+                //transform.position = new Vector3(transform.position.x + 4f, transform.position.y, 0f);
+                //facingLeft = false;
+            //}
+            //else if (hit == false && facingLeft == false)
+            //{
+                //transform.eulerAngles = new Vector3(0f, 0f, 0f);
+                //transform.position = new Vector3(transform.position.x - 4f, transform.position.y, 0f);
+                //facingLeft = true;
+            //}
         }
         
-        if (HP <= 0f)
+        if (HP <= 0f && isAlive)
         {
             Death();
         }
@@ -176,10 +172,15 @@ public class enemy1logic : MonoBehaviour
         }
         
     }
-    
+    public void afterhit()
+    {
+        animator.SetBool("walk", true);
+    }
     private void Death()
     {
         animator.SetTrigger("Death");
+        isAlive = false;
         Destroy(gameObject, 1.5f);
+        gameManager.enemykilled++;
     }
 }
