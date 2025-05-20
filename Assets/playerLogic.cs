@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -19,6 +20,13 @@ public class playerLogic : MonoBehaviour
     public Transform attackPoint;
     public LayerMask attackLayer;
     public float attackRange = 2f;
+    public bool canDash = true;
+    public bool isDashing = false;
+    public float dashPower = 10f;
+    public float dashTime = 0.5f;
+    public float dashCooldown = 1f;
+
+    [SerializeField] private TrailRenderer trail;
     
     void Start()
     {
@@ -82,7 +90,7 @@ public class playerLogic : MonoBehaviour
 
         if (HP <= 0f)
         {
-            Death();
+            animator.SetTrigger("Death");
         }
 
     }
@@ -91,7 +99,10 @@ public class playerLogic : MonoBehaviour
     {
         //player movement
         transform.position += new Vector3(movement , 0f, 0f) * Time.fixedDeltaTime * movSpeed;
-        
+        if (Input.GetMouseButtonDown(1) && canDash && !isDashing)
+        {
+            StartCoroutine(Dash());
+        }
 
     }
 
@@ -125,9 +136,9 @@ public class playerLogic : MonoBehaviour
 
     public void Death()
     {
-        animator.SetTrigger("Death");
-        Destroy(gameObject, 2f);
+        FindObjectOfType<gameManager>().GameOver();
         FindObjectOfType<gameManager>().isGameActive = false;
+        Destroy(gameObject, 0f);
     }
 
     private void OnDrawGizmosSelected()
@@ -145,6 +156,33 @@ public class playerLogic : MonoBehaviour
             {
                 atkCollider.gameObject.GetComponent<enemy1logic>().takingDamage(attackDamage);
             }
+            if (atkCollider.gameObject.GetComponent<KnightBossLogic>() != null)
+            {
+                atkCollider.gameObject.GetComponent<KnightBossLogic>().takingDamage(attackDamage);
+            }
         }
+    }
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rigidbody.gravityScale;
+        rigidbody.gravityScale = 0f;
+        if (facingRight)
+        {
+            rigidbody.linearVelocity = new Vector2(transform.localScale.x * dashPower, 0f);
+        }
+        else
+        {
+            rigidbody.linearVelocity = new Vector2(-transform.localScale.x * dashPower, 0f);
+        }
+        trail.emitting = true;
+        yield return new WaitForSeconds(dashTime);
+        trail.emitting = false;
+        rigidbody.gravityScale = originalGravity;
+        isDashing = false; 
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 }

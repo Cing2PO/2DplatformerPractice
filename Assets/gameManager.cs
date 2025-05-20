@@ -7,6 +7,7 @@ public class gameManager : MonoBehaviour
     public Boolean isGameActive;
     public int enemykilled;
     public GameObject WinningScreen;
+    public GameObject GameOverScreen;
     
     public void Start()
     {
@@ -20,10 +21,6 @@ public class gameManager : MonoBehaviour
         {
             Time.timeScale = 0f;
         }
-        if (enemykilled == 5)
-        {
-            Winning();
-        }
     }   
 
     public void Winning()
@@ -31,7 +28,11 @@ public class gameManager : MonoBehaviour
         WinningScreen.SetActive(true);
         isGameActive = false;
     }
-
+    public void GameOver()
+    {
+        GameOverScreen.SetActive(true);
+        isGameActive = false;
+    }
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
